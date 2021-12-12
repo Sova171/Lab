@@ -6,6 +6,118 @@ namespace Lab5
 {
     class Program
     {
+        private static int[,] Transp(int[,] num)
+        {
+            int[,] trans = new int[num.GetLength(0),num.GetLength(1)];
+            for (int i = 0; i < num.GetLength(0); i++)
+            {
+                for (int j = 0; j < num.GetLength(1); j++)
+                {
+                    trans[i, j] = num[j, i];
+
+                }
+            }    
+                return trans;
+        }
+        private static int[,] Plus_rad(int[,] num)
+        {
+            int[,] rad = new int[num.GetLength(0)+1,num.GetLength(1)];
+            for (int i = 0; i < rad.GetLength(0); i++)
+            {
+                for (int j = 0; j < rad.GetLength(1); j++)
+                {
+                    if ( i < num.GetLength(0))
+                    {
+                        rad[i, j] = num[i,j];
+                    }
+                    else
+                    {
+                        rad[i, j] = 1;
+                    }
+                }
+            }
+            return rad;
+        }
+        private static int[,] Plus_st(int[,] num)
+        {
+            int[,] st = new int[num.GetLength(0), num.GetLength(1)+1];
+            int length = st.GetLength(0);
+            int length1 = st.GetLength(1);
+            for (int i = 0; i < st.GetLength(0); i++)
+            {
+                for (int j = 0; j < st.GetLength(1); j++)
+                {
+                    if (j < num.GetLength(1))
+                    {
+                        st[i, j] = num[i, j];
+                    }
+                    if (j == st.GetLength(1)-1 && i!= st.GetLength(0)-1)
+                    {
+                        st[i, j] = -1;
+                    }
+                    if (i == st.GetLength(0)-1 && j == st.GetLength(1)-1)
+                    {
+                        st[i, j] = 0;
+                    }
+                }
+            }
+            return st;
+        }
+        private static void Gaus(int[,] num, string name)
+        {
+            num = Plus_rad(num);
+            num = Plus_st(num);
+            int n = num.GetLength(0);
+            double[,] a = new double[n, n];
+            double[] b = new double[n];
+            double[] x = new double[n];
+            double s;
+            for (int i = 0; i < n; i++)
+                x[i] = 0;
+            //коэффициенты системы
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                {
+                    a[i, j] = num[i,j];
+                }
+            //свободные коэффициенты
+            for (int i = 0; i < n; i++)
+            {
+                if (i < n-1)
+                {
+                    b[i] = 0;
+                }
+                else
+                {
+                    b[i] = 1;
+                }              
+            }               
+            for (int k = 0; k < n - 1; k++)
+            {
+                for (int i = k + 1; i < n; i++)
+                {
+                    for (int j = k + 1; j < n; j++)
+                    {
+                        a[i, j] = a[i, j] - a[k, j] * (a[i, k] / a[k, k]);
+                    }
+                    b[i] = b[i] - b[k] * a[i, k] / a[k, k];
+                }
+            }
+            for (int k = n - 1; k >= 0; k--)
+            {
+                s = 0;
+                for (int j = k + 1; j < n; j++)
+                    s = s + a[k, j] * x[j];
+                x[k] = (b[k] - s) / a[k, k];
+            }
+            Console.WriteLine("Стратегiї мають наступнi ймовiрностi");
+            for (int i = 0; i < x.Length-1; i++)
+            {
+                Console.WriteLine("{0}{1}: {2}",name, i+1, Math.Round(x[i], 3));
+            }
+            Console.WriteLine("Цiна гри:");
+            Console.WriteLine("y = " + Math.Round(x[x.Length-1], 3));
+        }
         private static void Out(int[,] num)
         {
             Console.WriteLine();
@@ -17,25 +129,7 @@ namespace Lab5
             }
             Console.WriteLine();
         }
-        private static void Result(int[,] num)
-        {
-            Console.Write("Ймовiрнiсть 1 стратегiї: ");
-            Console.WriteLine("{0}/{1}",-(num[1,1]-num[1,0]),-(num[0,0]+num[1,1]-num[1,0]-num[0,1]));
-            Console.Write("Ймовiрнiсть 2 стратегiї: ");
-            Console.WriteLine("{0}/{1}",-(num[0,0]-num[0,1]),-(num[0, 0] + num[1, 1] - num[1, 0] - num[0, 1]));
-            Console.Write("Result of matrix game: ");
-            for (int i = 0; i < num.GetLength(0); i++)
-            {
-                for (int j = 0; j < num.GetLength(1); j++)
-                {
-                    num[i, j] = (int)Convert.ToDouble(num[i,j]);
-                }
-            }
-            double chus = num[0, 0] * num[1, 1] - num[0, 1] * num[1, 0];
-            double znam = num[0, 0] + num[1, 1] - num[1, 0] - num[0, 1];
-            Console.WriteLine(chus/znam);
-
-        }
+       
         private static int[,] Delete_str(int[,] array,int idx)
         {           
                 int[,] arrOut = new int[array.GetLength(0) - 1, array.GetLength(1)];
@@ -135,8 +229,6 @@ namespace Lab5
                         checkin++;
                         break;
                 }
-                
-                //buble = Assignment(array, don);
             }
                 if (checkin > 0)
                 {
@@ -227,7 +319,7 @@ namespace Lab5
             for (int i = 0; i < array.GetLength(0); i++)
             {   
                 int temp = array[i,0];
-                int temp_row = array[i,0];
+                int temp_row = array[0,i];
                 for (int j = 0; j < array.GetLength(0); j++)
                 {
                     if (temp_row < array[j, i])
@@ -259,11 +351,12 @@ namespace Lab5
 
             Out(num);
             Min_Max(num);
+            bool finish = false;
             while (true)
             {
                 Console.WriteLine("1) Вилучення рядкiв");
                 Console.WriteLine("2) Вилучення стовпцiв");
-                Console.WriteLine("3) Результати для таблицi 2x2");
+                Console.WriteLine("3) Результати");
                 int a = int.Parse(Console.ReadLine());
                 
                 switch (a)
@@ -277,10 +370,18 @@ namespace Lab5
                     Out(num);                    
                         break;
                     case 3:
-                        Result(num);
-                        break;
-                }                            
+                        Gaus(num,"q");
+                        num = Transp(num);
+                        Gaus(num, "p");  
+                        finish = true;                      
+                        break;                        
+                }
+                if (finish)
+                {
+                    break;
+                }
             }
+            Console.ReadKey();
         }
     }
 }

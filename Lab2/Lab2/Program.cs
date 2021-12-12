@@ -82,12 +82,12 @@ namespace Lab2
             Console.Write("Варiант А: ");
             Factory(A, 5);
             Console.Write("Варiант Б: ");
-            Factory(B, 5);
-            Change(A, C);
+            Factory(B, 5);           
             Console.Write("Варiант А_С: ");
+            Change(A, C);
             Factory(A, 4);
-            Change(B, C);
             Console.Write("Варiант B_С: ");
+            Change(B, C);
             Factory(B, 4);
             Console.ReadKey();
         }
